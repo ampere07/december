@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fireworks Cracker</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #222;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    #container {
+      position: relative;
+      width: 300px;
+      height: 400px;
+    }
+
+    #fireworks {
+      position: absolute;
+      width: 50px;
+      height: 150px;
+      background-color: #ff4d4d;
+      border: 2px solid #fff;
+      border-radius: 5px;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #fireworks::before {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 25px solid transparent;
+      border-right: 25px solid transparent;
+      border-bottom: 30px solid #ff4d4d;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    #match {
+      position: absolute;
+      width: 20px;
+      height: 100px;
+      background-color: #8b4513;
+      border: 2px solid #fff;
+      border-radius: 5px;
+      top: 50%;
+      right: 10%;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #match.fire {
+      background-color: #f00;
+    }
+
+    #match::before {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #ff0;
+      border-radius: 50%;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+    }
+
+    #match.fire::before {
+      display: block;
+    }
+
+    #confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 3;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0); /* Transparent background */
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #ff0;
+      border-radius: 50%;
+      opacity: 0.9;
+      pointer-events: none;
+      animation: fall linear;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(-100vh);
+      }
+      to {
+        transform: translateY(100vh);
+      }
+    }
+
+    #modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 250px;
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    #modal.show {
+      display: block;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
+
+    .modal-close {
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .modal-body {
+      margin-top: 10px;
+    }
+
+    @keyframes rise {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-300px);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="container">
+    <div id="fireworks" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    <div id="match" draggable="true" ondragstart="drag(event)"></div>
+    <div id="confetti"></div>
+  </div>
+  <div id="modal" class="modal">
+    <div class="modal-header">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      Happy Monthsary Baby!
+    </div>
+    <div class="modal-body">
+      <p>Napalipad mo yung fireworks ahh galingg so proud. Proud bf heree btw happy monthsary baby stay healty sating parehas and sabay tayong sasalubong ng bagong taon iloveyouuu</p><br>
+      <p>From:Raven pogi ampere aka Babymooo mwaaa</p>
+    </div>
+  </div>
+
+  <script>
+    let isMatchLit = false;
+
+    function allowDrop(event) {
+      event.preventDefault();
+    }
+
+    function drag(event) {
+      if (isMatchLit) {
+        event.dataTransfer.setData('text/plain', '');
+      } else {
+        event.preventDefault();
+      }
+    }
+
+    function drop(event) {
+      event.preventDefault();
+      if (isMatchLit) {
+        animateFireworks();
+        setTimeout(() => {
+          createConfetti();
+          setTimeout(() => {
+            document.getElementById('fireworks').style.display = 'none'; // Fireworks disappear
+            showModal(); // Show the modal
+          }, 2000); // Confetti display duration
+        }, 5000); // 2 seconds delay before confetti
+      }
+    }
+
+    document.getElementById('match').addEventListener('click', () => {
+      document.getElementById('match').classList.add('fire');
+      isMatchLit = true;
+    });
+
+    function animateFireworks() {
+      const fireworks = document.getElementById('fireworks');
+      fireworks.style.transition = 'transform 2s ease-out';
+      fireworks.style.transform = 'translateY(-1000px)'; // Move fireworks up
+    }
+
+    function createConfetti() {
+      const confettiContainer = document.getElementById('confetti');
+      const numConfetti = 100;
+
+      for (let i = 0; i < numConfetti; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti-piece');
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 70%)`;
+
+        // Random horizontal and vertical position
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+
+        confetti.style.left = `${x}%`;
+        confetti.style.top = `${y}%`;
+
+        // Randomize animation duration
+        const duration = Math.random() * 5 + 5; // Between 5 and 10 seconds
+        confetti.style.animationDuration = `${duration}s`;
+
+        confettiContainer.appendChild(confetti);
+      }
+    }
+
+    function showModal() {
+      document.getElementById('modal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('show');
+    }
+  </script>
+
+</body>
+</html>
